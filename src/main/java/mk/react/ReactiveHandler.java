@@ -109,17 +109,15 @@ public class ReactiveHandler {
  	    	wu.setId("mkid");
  	    	wu.setParentId("mkparentId");
  	    	wu.setSpanTraceId("mkspanTraceId");
+ 	    	String threadName=Thread.currentThread().getName() ;
+ 	    	System.out.println("threadName "+threadName);
+
  	        Thread.sleep(1000);
 // 	        return ServerResponse.ok().body(Mono.just(wu), WorkUnit.class).first();
  	        return ServerResponse.ok().body(Mono.just(wu), WorkUnit.class).block();
  	        
  	        
- 	    }).subscribeOn(Schedulers.elastic());
-		
-    	 
-    	 
-//    	 return Mono.fromCallable(dosomething(wu)).subscribeOn(Schedulers.elastic());
-    	 
+ 	    }).subscribeOn(Schedulers.elastic());    	 
 	}
 
 
