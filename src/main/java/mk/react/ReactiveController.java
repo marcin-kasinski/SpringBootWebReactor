@@ -27,6 +27,8 @@ public RouterFunction<ServerResponse> routes(ReactiveHandler postController) {
         	.andRoute(GET("/home1"), postController::home1)
         	.andRoute(GET("/home2"), postController::home2)
         	.andRoute(GET("/home3"), postController::home3) 
+        	.andRoute(GET("/home4"), postController::home4) 
+        	.andRoute(GET("/home5"), postController::home5) 
         //.andRoute(POST("/posts"), postController::create)
         //.andRoute(GET("/posts/{id}"), postController::get)
         //.andRoute(PUT("/posts/{id}"), postController::update)

@@ -90,6 +90,23 @@ public class ReactiveHandler {
 				WorkUnit.class);
 	}
 
+	public Mono<ServerResponse> home5(ServerRequest req) {
+//		String id = req.pathVariable("id");
+		
+		WorkUnit wu= new WorkUnit("parentId","spanTraceId","id","definition");
+    	wu.setDefinition("mkdefinition");
+    	wu.setId("mkid");
+    	wu.setParentId("mkparentId");
+    	wu.setSpanTraceId("mkspanTraceId");
+
+		return ServerResponse.ok().body(Mono.just(dosomething(wu))
+				.publishOn(Schedulers.elastic())
+			//	.subscribe(v -> System.out.prinln(""))
+				.subscribeOn(Schedulers.elastic())
+				,
+				WorkUnit.class);
+	}
+
 	public Mono<ServerResponse> findAll(ServerRequest req) {
 		
 		WorkUnit wu1= new WorkUnit("parentId1","spanTraceId1","id1","definition1");
