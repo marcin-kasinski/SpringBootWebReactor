@@ -13,7 +13,7 @@ import reactor.core.scheduler.Schedulers;
 @Component
 public class ReactiveHandler {
 
-	public Callable<WorkUnit> dosomething(WorkUnit wu) {
+	public WorkUnit dosomething(WorkUnit wu) {
 		
 		String threadName=Thread.currentThread().getName() ;
     	System.out.println("threadName "+threadName);
@@ -24,7 +24,7 @@ public class ReactiveHandler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return (Callable<WorkUnit>) wu;
+		return wu;
 	}
 	
 	public Mono<ServerResponse> home1(ServerRequest req) {
@@ -92,12 +92,10 @@ public class ReactiveHandler {
     	wu.setId("mkid");
     	wu.setParentId("mkparentId");
     	wu.setSpanTraceId("mkspanTraceId");
-        try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+    	
+    	dosomething(wu);
+    	
 		return ServerResponse.ok().body(Mono.just(wu)
 				.publishOn(Schedulers.elastic())
 			//	.subscribe(v -> System.out.prinln(""))
@@ -114,10 +112,9 @@ public class ReactiveHandler {
  	    	wu.setId("mkid");
  	    	wu.setParentId("mkparentId");
  	    	wu.setSpanTraceId("mkspanTraceId");
- 	    	String threadName=Thread.currentThread().getName() ;
- 	    	System.out.println("threadName "+threadName);
 
- 	        Thread.sleep(1000);
+ 	    	dosomething(wu);
+
 // 	        return ServerResponse.ok().body(Mono.just(wu), WorkUnit.class).first();
  	        return ServerResponse.ok().body(Mono.just(wu), WorkUnit.class).block();
  	        
