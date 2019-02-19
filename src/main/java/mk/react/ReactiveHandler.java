@@ -16,11 +16,25 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 import mk.WorkUnit;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 @Component
 public class ReactiveHandler {
 
+	public WorkUnit dosomething(WorkUnit wu) {
+		
+		String threadName=Thread.currentThread().getName() ;
+    	System.out.println("threadName "+threadName);
+
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return wu;
+	}
 	
-	public Mono<ServerResponse> findPerson(ServerRequest req) {
+	public Mono<ServerResponse> home1(ServerRequest req) {
 //		String id = req.pathVariable("id");
 		
 		WorkUnit wu= new WorkUnit("parentId","spanTraceId","id","definition");
@@ -28,17 +42,51 @@ public class ReactiveHandler {
     	wu.setId("mkid");
     	wu.setParentId("mkparentId");
     	wu.setSpanTraceId("mkspanTraceId");
+
+		return ServerResponse.ok().body(Mono.just(wu).map(this::dosomething),
+				WorkUnit.class);
+	}
+
+	public Mono<ServerResponse> home2(ServerRequest req) {
+//		String id = req.pathVariable("id");
 		
-    	String threadName=Thread.currentThread().getName() ;
-    	System.out.println("threadName "+threadName);
-    	try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		WorkUnit wu= new WorkUnit("parentId","spanTraceId","id","definition");
+    	wu.setDefinition("mkdefinition");
+    	wu.setId("mkid");
+    	wu.setParentId("mkparentId");
+    	wu.setSpanTraceId("mkspanTraceId");
+
 		return ServerResponse.ok().body(Mono.just(wu),
+				WorkUnit.class);
+	}
+
+	public Mono<ServerResponse> home3(ServerRequest req) {
+//		String id = req.pathVariable("id");
+		
+		WorkUnit wu= new WorkUnit("parentId","spanTraceId","id","definition");
+    	wu.setDefinition("mkdefinition");
+    	wu.setId("mkid");
+    	wu.setParentId("mkparentId");
+    	wu.setSpanTraceId("mkspanTraceId");
+
+		return ServerResponse.ok().body(Mono.just(dosomething(wu)),
+				WorkUnit.class);
+	}
+
+	public Mono<ServerResponse> home4(ServerRequest req) {
+//		String id = req.pathVariable("id");
+		
+		WorkUnit wu= new WorkUnit("parentId","spanTraceId","id","definition");
+    	wu.setDefinition("mkdefinition");
+    	wu.setId("mkid");
+    	wu.setParentId("mkparentId");
+    	wu.setSpanTraceId("mkspanTraceId");
+
+		return ServerResponse.ok().body(Mono.just(dosomething(wu))
+				.publishOn(Schedulers.elastic())
+			//	.subscribe(v -> System.out.prinln(""))
+				.subscribeOn(Schedulers.parallel())
+				,
 				WorkUnit.class);
 	}
 
@@ -52,6 +100,6 @@ public class ReactiveHandler {
 
 		
 		return ServerResponse.ok().body(
-				Flux.just(      wu1,wu2,wu3,wu4,wu5 ), WorkUnit.class);
+				Flux.just(wu1,wu2,wu3,wu4,wu5 ), WorkUnit.class);
 }
 }
