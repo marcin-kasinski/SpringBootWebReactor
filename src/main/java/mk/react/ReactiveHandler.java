@@ -92,7 +92,12 @@ public class ReactiveHandler {
     	wu.setId("mkid");
     	wu.setParentId("mkparentId");
     	wu.setSpanTraceId("mkspanTraceId");
-
+        try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return ServerResponse.ok().body(Mono.just(wu)
 				.publishOn(Schedulers.elastic())
 			//	.subscribe(v -> System.out.prinln(""))
