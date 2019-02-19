@@ -22,7 +22,8 @@ public class ReactiveController {
 @Bean
 public RouterFunction<ServerResponse> routes(ReactiveHandler postController) {
     return route(GET("/findPerson"), postController::findPerson)
-    	.andRoute(GET("/findAll"), postController::findAll)
+        	.andRoute(GET("/findAll"), postController::findAll)
+        	.andRoute(GET("/"), postController::findPerson)
         //.andRoute(POST("/posts"), postController::create)
         //.andRoute(GET("/posts/{id}"), postController::get)
         //.andRoute(PUT("/posts/{id}"), postController::update)
