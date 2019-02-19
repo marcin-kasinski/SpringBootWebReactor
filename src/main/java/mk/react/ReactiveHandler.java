@@ -29,6 +29,8 @@ public class ReactiveHandler {
     	wu.setParentId("mkparentId");
     	wu.setSpanTraceId("mkspanTraceId");
 		
+    	String threadName=Thread.currentThread().getName() ;
+    	System.out.println("threadName "+threadName);
 		
 		return ServerResponse.ok().body(Mono.just(wu),
 				WorkUnit.class);
