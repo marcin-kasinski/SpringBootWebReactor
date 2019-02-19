@@ -1,17 +1,10 @@
 package mk.react;
+import java.util.concurrent.Callable;
 
-
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.server.RouterFunction;
+
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
-import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
-import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 import mk.WorkUnit;
 import reactor.core.publisher.Flux;
@@ -20,7 +13,7 @@ import reactor.core.scheduler.Schedulers;
 @Component
 public class ReactiveHandler {
 
-	public WorkUnit dosomething(WorkUnit wu) {
+	public Callable<WorkUnit> dosomething(WorkUnit wu) {
 		
 		String threadName=Thread.currentThread().getName() ;
     	System.out.println("threadName "+threadName);
@@ -31,7 +24,7 @@ public class ReactiveHandler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return wu;
+		return (Callable<WorkUnit>) wu;
 	}
 	
 	public Mono<ServerResponse> home1(ServerRequest req) {
@@ -43,7 +36,8 @@ public class ReactiveHandler {
     	wu.setParentId("mkparentId");
     	wu.setSpanTraceId("mkspanTraceId");
 
-		return ServerResponse.ok().body(Mono.just(wu).map(this::dosomething),
+		//return ServerResponse.ok().body(Mono.just(wu).map(this::dosomething),
+				return ServerResponse.ok().body(Mono.just(wu),
 				WorkUnit.class);
 	}
 
@@ -69,7 +63,7 @@ public class ReactiveHandler {
     	wu.setParentId("mkparentId");
     	wu.setSpanTraceId("mkspanTraceId");
 
-		return ServerResponse.ok().body(Mono.just(dosomething(wu)),
+		return ServerResponse.ok().body(Mono.just(wu),
 				WorkUnit.class);
 	}
 
@@ -82,7 +76,7 @@ public class ReactiveHandler {
     	wu.setParentId("mkparentId");
     	wu.setSpanTraceId("mkspanTraceId");
 
-		return ServerResponse.ok().body(Mono.just(dosomething(wu))
+		return ServerResponse.ok().body(Mono.just(wu)
 				.publishOn(Schedulers.elastic())
 			//	.subscribe(v -> System.out.prinln(""))
 				.subscribeOn(Schedulers.parallel())
@@ -99,13 +93,36 @@ public class ReactiveHandler {
     	wu.setParentId("mkparentId");
     	wu.setSpanTraceId("mkspanTraceId");
 
-		return ServerResponse.ok().body(Mono.just(dosomething(wu))
+		return ServerResponse.ok().body(Mono.just(wu)
 				.publishOn(Schedulers.elastic())
 			//	.subscribe(v -> System.out.prinln(""))
 				.subscribeOn(Schedulers.elastic())
 				,
 				WorkUnit.class);
 	}
+
+	public Mono<ServerResponse> home6(ServerRequest req) {
+
+    	 return Mono.fromCallable(() -> {
+ 	    	WorkUnit wu= new WorkUnit("parentId","spanTraceId","id","definition");
+ 	    	wu.setDefinition("mkdefinition");
+ 	    	wu.setId("mkid");
+ 	    	wu.setParentId("mkparentId");
+ 	    	wu.setSpanTraceId("mkspanTraceId");
+ 	        Thread.sleep(1000);
+// 	        return ServerResponse.ok().body(Mono.just(wu), WorkUnit.class).first();
+ 	        return ServerResponse.ok().body(Mono.just(wu), WorkUnit.class).block();
+ 	        
+ 	        
+ 	    }).subscribeOn(Schedulers.elastic());
+		
+    	 
+    	 
+//    	 return Mono.fromCallable(dosomething(wu)).subscribeOn(Schedulers.elastic());
+    	 
+	}
+
+
 
 	public Mono<ServerResponse> findAll(ServerRequest req) {
 		
