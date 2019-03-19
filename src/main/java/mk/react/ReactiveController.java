@@ -12,18 +12,18 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 @Configuration
-@EnableWebFlux
+//@EnableWebFlux
 public class ReactiveController {
 
 @Autowired
-	ReactiveHandler handler;
+ReactiveHandler handler;
 
 
 @Bean
 public RouterFunction<ServerResponse> routes(ReactiveHandler postController) {
     return route(GET("/findPerson"), postController::home1)
         	.andRoute(GET("/findAll"), postController::findAll)
-        	.andRoute(GET("/"), postController::home1)
+        	//.andRoute(GET("/"), postController::home1)
         	.andRoute(GET("/home1"), postController::home1)
         	.andRoute(GET("/home2"), postController::home2)
         	.andRoute(GET("/home3"), postController::home3) 
